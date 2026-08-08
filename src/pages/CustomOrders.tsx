@@ -1,6 +1,4 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Palette, ArrowRight } from "lucide-react";
 import ContactSection from "@/components/sections/Contact";
 
 export default function CustomOrders() {

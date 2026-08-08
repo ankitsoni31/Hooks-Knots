@@ -7,6 +7,8 @@ import Category from "@/pages/Category";
 import Shop from "@/pages/Shop";
 import Contact from "@/pages/Contact";
 import CustomOrders from "@/pages/CustomOrders";
+import Checkout from "@/pages/Checkout";
+import OrderConfirmation from "@/pages/OrderConfirmation";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
             <Route path="/shop/:categoryId" element={<Category />} />
             <Route path="/custom-orders" element={<CustomOrders />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
           </Routes>
         </main>
         <Footer />
