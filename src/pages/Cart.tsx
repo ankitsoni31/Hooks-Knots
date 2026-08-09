@@ -4,8 +4,9 @@ import { ShoppingBag, ArrowLeft, Trash2, Plus, Minus } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 
 export default function Cart() {
-    const { items, total, removeItem, updateQuantity } = useCart();
+    const { items, removeItem, updateQuantity } = useCart();
     const navigate = useNavigate();
+    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     if (items.length === 0) {
         return (
