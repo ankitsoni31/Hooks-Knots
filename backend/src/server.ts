@@ -9,6 +9,7 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { CORS_ORIGIN } from './config/config.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { initEmailService } from './services/emailService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,6 +47,9 @@ app.get('/api/health', (_req, res) => {
 
 // Import routes AFTER dotenv.config() and after middleware setup
 const { default: apiRoutes } = await import('./routes/index.js');
+
+initEmailService();
+
 app.use('/api', apiRoutes);
 
 app.use(notFoundHandler);
