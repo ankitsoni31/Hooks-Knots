@@ -27,7 +27,7 @@ function LoginPage() {
 
     return (
         <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '24px', background: '#f3f4f6' }}>
-            <div style={{ maxWidth: '420px', width: '100%', background: '#fff', borderRadius: '16px', boxShadow: '0 10px 30px rgba(15,23,42,0.08)', padding: '32px' }}>
+            <div className="card" style={{ maxWidth: '420px', width: '100%', boxShadow: '0 10px 30px rgba(15,23,42,0.08)', padding: '32px' }}>
                 <div style={{ marginBottom: '24px' }}>
                     <p style={{ margin: 0, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '0.75rem' }}>Hooks & Knots</p>
                     <h1 style={{ margin: '12px 0 0', fontSize: '1.75rem', color: '#111827' }}>Admin Login</h1>
@@ -40,26 +40,28 @@ function LoginPage() {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #d1d5db', marginBottom: '16px' }}
+                        className="form-input"
                         required
                     />
 
-                    <label style={{ display: 'block', marginBottom: '8px', color: '#374151' }}>Password</label>
-                    <div style={{ position: 'relative', marginBottom: '16px' }}>
-                        <input
-                            type={showPassword ? 'text' : 'password'}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #d1d5db' }}
-                            required
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword((current) => !current)}
-                            style={{ position: 'absolute', top: 0, bottom: 0, right: '12px', border: 'none', background: 'transparent', color: '#4b5563', cursor: 'pointer' }}
-                        >
-                            {showPassword ? 'Hide' : 'Show'}
-                        </button>
+                    <div className="form-group mb-6">
+                        <label className="form-label" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Password</label>
+                        <div style={{ position: 'relative', marginBottom: '16px' }}>
+                            <input
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="form-input"
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((current) => !current)}
+                                style={{ position: 'absolute', top: 0, bottom: 0, right: '12px', border: 'none', background: 'transparent', color: '#4b5563', cursor: 'pointer' }}
+                            >
+                                {showPassword ? 'Hide' : 'Show'}
+                            </button>
+                        </div>
                     </div>
 
                     {error && <p style={{ color: '#dc2626', marginBottom: '16px' }}>{error}</p>}
@@ -67,9 +69,10 @@ function LoginPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: 'none', background: '#111827', color: '#fff', cursor: loading ? 'default' : 'pointer' }}
+                        className="btn btn-primary"
+                        style={{ width: '100%', padding: '12px', fontSize: '16px' }}
                     >
-                        {loading ? 'Signing in...' : 'Sign in'}
+                        {loading ? 'Logging in...' : 'Sign In'}
                     </button>
                 </form>
             </div>

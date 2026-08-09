@@ -52,65 +52,56 @@ export default function CategoriesPage() {
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h1 style={{ margin: 0, fontSize: '24px' }}>Categories</h1>
-                <button 
-                    onClick={openCreateForm}
-                    style={{ background: '#2563eb', color: '#fff', padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
-                >
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-xl font-semibold m-0">Categories</h1>
+                <button onClick={openCreateForm} className="btn btn-primary">
                     + Add Category
                 </button>
             </div>
 
             {error && <div style={{ color: '#ef4444', marginBottom: '16px' }}>{error}</div>}
 
-            <div style={{ marginBottom: '16px' }}>
+            <div className="mb-4">
                 <input 
                     type="text" 
                     placeholder="Search categories..." 
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    style={{ padding: '8px 12px', width: '300px', borderRadius: '6px', border: '1px solid #d1d5db' }}
+                    className="form-input"
+                    style={{ maxWidth: '300px' }}
                 />
             </div>
 
-            <div style={{ background: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+            <div className="table-container">
+                <table className="table">
+                    <thead>
                         <tr>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563' }}>Name</th>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563' }}>Slug</th>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563' }}>Status</th>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563', textAlign: 'right' }}>Actions</th>
+                            <th>Name</th>
+                            <th>Slug</th>
+                            <th>Status</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
-                            <tr><td colSpan={4} style={{ padding: '24px', textAlign: 'center' }}>Loading...</td></tr>
+                            <tr><td colSpan={4} style={{ textAlign: 'center' }}>Loading...</td></tr>
                         ) : filteredCategories.length === 0 ? (
-                            <tr><td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: '#6b7280' }}>No categories found.</td></tr>
+                            <tr><td colSpan={4} style={{ textAlign: 'center' }} className="text-muted">No categories found.</td></tr>
                         ) : (
                             filteredCategories.map(cat => (
-                                <tr key={cat.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                    <td style={{ padding: '12px 16px', fontWeight: '500' }}>{cat.name}</td>
-                                    <td style={{ padding: '12px 16px', color: '#6b7280' }}>{cat.slug}</td>
-                                    <td style={{ padding: '12px 16px' }}>
-                                        <span style={{ 
-                                            padding: '4px 8px', 
-                                            borderRadius: '9999px', 
-                                            fontSize: '12px',
-                                            background: cat.status === 'active' ? '#dcfce7' : '#f3f4f6',
-                                            color: cat.status === 'active' ? '#166534' : '#374151',
-                                            fontWeight: '500'
-                                        }}>
+                                <tr key={cat.id}>
+                                    <td className="font-semibold">{cat.name}</td>
+                                    <td className="text-muted">{cat.slug}</td>
+                                    <td>
+                                        <span className={`badge ${cat.status === 'active' ? 'badge-success' : 'badge-neutral'}`}>
                                             {cat.status.charAt(0).toUpperCase() + cat.status.slice(1)}
                                         </span>
                                     </td>
-                                    <td style={{ padding: '12px 16px', textAlign: 'right' }}>
-                                        <button onClick={() => openEditForm(cat)} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', marginRight: '12px' }} title="Edit">
+                                    <td style={{ textAlign: 'right' }}>
+                                        <button onClick={() => openEditForm(cat)} style={{ color: '#3b82f6', cursor: 'pointer', marginRight: '12px' }} title="Edit">
                                             <Edit2 size={18} />
                                         </button>
-                                        <button onClick={() => handleDelete(cat.id, cat.name)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }} title="Delete">
+                                        <button onClick={() => handleDelete(cat.id, cat.name)} style={{ color: 'var(--danger)', cursor: 'pointer' }} title="Delete">
                                             <Trash2 size={18} />
                                         </button>
                                     </td>

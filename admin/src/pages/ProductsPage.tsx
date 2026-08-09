@@ -85,28 +85,27 @@ export default function ProductsPage() {
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h1 style={{ margin: 0, fontSize: '24px' }}>Products</h1>
-                <button 
-                    onClick={openCreateForm}
-                    style={{ background: '#2563eb', color: '#fff', padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
-                >
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-xl font-semibold m-0">Products</h1>
+                <button onClick={openCreateForm} className="btn btn-primary">
                     + Add Product
                 </button>
             </div>
 
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
+            <div className="flex gap-4 mb-4" style={{ flexWrap: 'wrap' }}>
                 <input 
                     type="text" 
                     placeholder="Search products..." 
                     value={searchTerm}
                     onChange={e => { setSearchTerm(e.target.value); setPage(1); }}
-                    style={{ padding: '8px 12px', width: '250px', borderRadius: '6px', border: '1px solid #d1d5db' }}
+                    className="form-input"
+                    style={{ maxWidth: '250px' }}
                 />
                 <select 
                     value={categoryId} 
                     onChange={e => { setCategoryId(e.target.value); setPage(1); }}
-                    style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #d1d5db' }}
+                    className="form-input"
+                    style={{ maxWidth: '200px' }}
                 >
                     <option value="">All Categories</option>
                     {categories.map(c => (
@@ -116,7 +115,8 @@ export default function ProductsPage() {
                 <select 
                     value={status} 
                     onChange={e => { setStatus(e.target.value); setPage(1); }}
-                    style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #d1d5db' }}
+                    className="form-input"
+                    style={{ maxWidth: '200px' }}
                 >
                     <option value="">All Statuses</option>
                     <option value="active">Active</option>
@@ -124,74 +124,67 @@ export default function ProductsPage() {
                 </select>
             </div>
 
-            <div style={{ background: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb', overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
-                    <thead style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+            <div className="table-container">
+                <table className="table" style={{ minWidth: '800px' }}>
+                    <thead>
                         <tr>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563', width: '60px' }}>Image</th>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563' }}>Product</th>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563' }}>Category</th>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563' }}>Price</th>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563' }}>Stock</th>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563' }}>Status</th>
-                            <th style={{ padding: '12px 16px', fontWeight: '600', color: '#4b5563', textAlign: 'right' }}>Actions</th>
+                            <th style={{ width: '60px' }}>Image</th>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
-                            <tr><td colSpan={7} style={{ padding: '24px', textAlign: 'center' }}>Loading...</td></tr>
+                            <tr><td colSpan={7} style={{ textAlign: 'center' }}>Loading...</td></tr>
                         ) : products.length === 0 ? (
-                            <tr><td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: '#6b7280' }}>No products found.</td></tr>
+                            <tr><td colSpan={7} style={{ textAlign: 'center' }} className="text-muted">No products found.</td></tr>
                         ) : (
                             products.map(prod => (
-                                <tr key={prod.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                    <td style={{ padding: '12px 16px' }}>
-                                        <div style={{ width: '40px', height: '40px', background: '#f3f4f6', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', fontSize: '10px' }}>
+                                <tr key={prod.id}>
+                                    <td>
+                                        <div style={{ width: '40px', height: '40px', background: 'var(--bg-root)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '10px' }}>
                                             No Img
                                         </div>
                                     </td>
-                                    <td style={{ padding: '12px 16px' }}>
-                                        <div style={{ fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <td>
+                                        <div className="font-semibold flex items-center gap-2">
                                             {prod.name}
                                             {prod.featured && <Star size={14} color="#f59e0b" fill="#f59e0b" />}
                                         </div>
-                                        <div style={{ fontSize: '12px', color: '#6b7280' }}>{prod.sku || 'No SKU'}</div>
+                                        <div className="text-muted" style={{ fontSize: '12px' }}>{prod.sku || 'No SKU'}</div>
                                     </td>
-                                    <td style={{ padding: '12px 16px' }}>{prod.category_name}</td>
-                                    <td style={{ padding: '12px 16px' }}>
+                                    <td>{prod.category_name}</td>
+                                    <td>
                                         {prod.discount_price ? (
                                             <div>
-                                                <span style={{ fontWeight: '600' }}>₹{prod.discount_price}</span>
+                                                <span className="font-semibold">₹{prod.discount_price}</span>
                                                 <br />
-                                                <del style={{ fontSize: '12px', color: '#6b7280' }}>₹{prod.price}</del>
+                                                <del className="text-muted" style={{ fontSize: '12px' }}>₹{prod.price}</del>
                                             </div>
                                         ) : (
-                                            <span style={{ fontWeight: '600' }}>₹{prod.price}</span>
+                                            <span className="font-semibold">₹{prod.price}</span>
                                         )}
                                     </td>
-                                    <td style={{ padding: '12px 16px', fontSize: '14px' }}>
+                                    <td style={{ fontSize: '14px' }}>
                                         {getStockBadge(prod.stock)}
                                     </td>
-                                    <td style={{ padding: '12px 16px' }}>
-                                        <span style={{ 
-                                            padding: '4px 8px', 
-                                            borderRadius: '9999px', 
-                                            fontSize: '12px',
-                                            background: prod.status === 'active' ? '#dcfce7' : '#f3f4f6',
-                                            color: prod.status === 'active' ? '#166534' : '#374151',
-                                            fontWeight: '500'
-                                        }}>
+                                    <td>
+                                        <span className={`badge ${prod.status === 'active' ? 'badge-success' : 'badge-neutral'}`}>
                                             {prod.status.charAt(0).toUpperCase() + prod.status.slice(1)}
                                         </span>
                                     </td>
-                                    <td style={{ padding: '12px 16px', textAlign: 'right' }}>
-                                        <button onClick={() => openImageModal(prod)} style={{ background: 'none', border: 'none', color: '#8b5cf6', cursor: 'pointer', marginRight: '12px' }} title="Manage Images">
+                                    <td style={{ textAlign: 'right' }}>
+                                        <button onClick={() => openImageModal(prod)} style={{ color: '#8b5cf6', cursor: 'pointer', marginRight: '12px' }} title="Manage Images">
                                             <ImageIcon size={18} />
                                         </button>
-                                        <button onClick={() => openEditForm(prod)} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', marginRight: '12px' }} title="Edit">
+                                        <button onClick={() => openEditForm(prod)} style={{ color: '#3b82f6', cursor: 'pointer', marginRight: '12px' }} title="Edit">
                                             <Edit2 size={18} />
                                         </button>
-                                        <button onClick={() => handleArchive(prod.id, prod.name)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }} title="Archive/Delete">
+                                        <button onClick={() => handleArchive(prod.id, prod.name)} style={{ color: 'var(--danger)', cursor: 'pointer' }} title="Archive/Delete">
                                             <Archive size={18} />
                                         </button>
                                     </td>
@@ -204,21 +197,23 @@ export default function ProductsPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '24px' }}>
+                <div className="flex justify-center gap-2 mt-4">
                     <button 
                         disabled={page === 1} 
                         onClick={() => setPage(p => p - 1)}
-                        style={{ padding: '6px 12px', border: '1px solid #d1d5db', borderRadius: '4px', background: '#fff', cursor: page === 1 ? 'not-allowed' : 'pointer' }}
+                        className="btn btn-outline"
+                        style={{ cursor: page === 1 ? 'not-allowed' : 'pointer' }}
                     >
                         Previous
                     </button>
-                    <span style={{ padding: '6px 12px', background: '#f3f4f6', borderRadius: '4px', border: '1px solid #e5e7eb' }}>
+                    <span className="badge badge-neutral" style={{ padding: '8px 12px', fontSize: '0.875rem' }}>
                         Page {page} of {totalPages}
                     </span>
                     <button 
                         disabled={page === totalPages} 
                         onClick={() => setPage(p => p + 1)}
-                        style={{ padding: '6px 12px', border: '1px solid #d1d5db', borderRadius: '4px', background: '#fff', cursor: page === totalPages ? 'not-allowed' : 'pointer' }}
+                        className="btn btn-outline"
+                        style={{ cursor: page === totalPages ? 'not-allowed' : 'pointer' }}
                     >
                         Next
                     </button>

@@ -1,7 +1,7 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
-import PlaceholderPage from './pages/PlaceholderPage';
+import SettingsPage from './pages/SettingsPage';
 import AdminLayout from './layouts/AdminLayout';
 import { useAdminAuth } from './hooks/useAdminAuth';
 import { LoadingScreen } from './components/LoadingScreen';
@@ -43,7 +43,7 @@ function App() {
             <Route path="/orders" element={<ProtectedRoute isAuthenticated={isAuthenticated}><OrdersPage /></ProtectedRoute>} />
             <Route path="/orders/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated}><OrderDetailPage /></ProtectedRoute>} />
             <Route path="/payments" element={<ProtectedRoute isAuthenticated={isAuthenticated}><PaymentsPage /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute isAuthenticated={isAuthenticated}><PlaceholderPage title="Settings" /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute isAuthenticated={isAuthenticated}><SettingsPage /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );

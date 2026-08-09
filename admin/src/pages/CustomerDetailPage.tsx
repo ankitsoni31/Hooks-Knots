@@ -55,11 +55,13 @@ export default function CustomerDetailPage() {
                 {customer.addresses.length === 0 ? (
                     <p style={{ color: '#9ca3af' }}>No addresses saved.</p>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {customer.addresses.map(addr => (
-                            <div key={addr.id} style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, background: '#fff', fontSize: 14 }}>
-                                <div>{addr.line1}</div>
-                                {addr.line2 && <div>{addr.line2}</div>}
+                            <div key={addr.id} className="card p-4 text-sm">
+                                <div className="font-semibold mb-2">
+                                    {addr.line1}
+                                </div>
+                                <div>{addr.line2}</div>
                                 <div>{addr.city}, {addr.state} — {addr.postal_code}</div>
                                 <div>{addr.country}</div>
                                 {addr.phone && <div style={{ color: '#6b7280', marginTop: 4 }}>📞 {addr.phone}</div>}
@@ -75,28 +77,26 @@ export default function CustomerDetailPage() {
                 {customer.recent_orders.length === 0 ? (
                     <p style={{ color: '#9ca3af' }}>No orders yet.</p>
                 ) : (
-                    <div style={{ background: '#fff', borderRadius: 8, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                            <thead style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                    <div className="table-container">
+                        <table className="table">
+                            <thead>
                                 <tr>
-                                    {['Order #', 'Date', 'Total', 'Status', ''].map(h => (
-                                        <th key={h} style={{ padding: '10px 16px', fontWeight: 600, color: '#4b5563', fontSize: 13 }}>{h}</th>
+                                    {['Order #', 'Date', 'Amount', 'Status', 'Action'].map(h => (
+                                        <th key={h}>{h}</th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
                                 {customer.recent_orders.map(o => {
-                                    const sc = STATUS_COLORS[o.status] || { bg: '#f3f4f6', color: '#374151' };
+                                    const sc = STATUS_COLORS[o.status] || { bg: 'var(--bg-root)', color: 'var(--text-secondary)' };
                                     return (
-                                        <tr key={o.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                            <td style={{ padding: '10px 16px', fontWeight: 600 }}>{o.order_number}</td>
-                                            <td style={{ padding: '10px 16px', color: '#6b7280', fontSize: 13 }}>{new Date(o.placed_at).toLocaleDateString('en-IN')}</td>
-                                            <td style={{ padding: '10px 16px', fontWeight: 600 }}>₹{Number(o.total).toFixed(2)}</td>
-                                            <td style={{ padding: '10px 16px' }}>
-                                                <span style={{ padding: '3px 8px', borderRadius: 9999, fontSize: 12, background: sc.bg, color: sc.color, fontWeight: 500 }}>{o.status}</span>
-                                            </td>
-                                            <td style={{ padding: '10px 16px' }}>
-                                                <button onClick={() => navigate(`/orders/${o.id}`)} style={{ padding: '3px 10px', background: '#e5e7eb', border: 'none', borderRadius: 4, cursor: 'pointer', fontSize: 12 }}>View</button>
+                                        <tr key={o.id}>
+                                            <td className="font-semibold">{o.order_number}</td>
+                                            <td className="text-muted" style={{ fontSize: 13 }}>{new Date(o.placed_at).toLocaleDateString('en-IN')}</td>
+                                            <td className="font-semibold">₹{Number(o.total).toFixed(2)}</td>
+                                            <td><span className="badge" style={{ background: sc.bg, color: sc.color }}>{o.status}</span></td>
+                                            <td>
+                                                <button onClick={() => navigate(`/orders/${o.id}`)} className="btn btn-primary" style={{ padding: '4px 12px', fontSize: 13 }}>View</button>
                                             </td>
                                         </tr>
                                     );

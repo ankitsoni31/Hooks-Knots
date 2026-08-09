@@ -12,11 +12,11 @@ export async function login(req: Request, res: Response) {
     }
 
     const [rows] = await pool.execute(
-        'SELECT id, email, password_hash, first_name, last_name FROM admins WHERE email = ? LIMIT 1',
+        'SELECT id, email, password_hash, first_name, last_name, theme, notifications_enabled FROM admins WHERE email = ? LIMIT 1',
         [email],
     );
 
-    const admins = rows as Array<{ id: number; email: string; password_hash: string; first_name: string; last_name: string }>;
+    const admins = rows as Array<{ id: number; email: string; password_hash: string; first_name: string; last_name: string, theme: string, notifications_enabled: boolean }>;
     const admin = admins[0];
 
     if (!admin || !(await bcrypt.compare(password, admin.password_hash))) {
@@ -41,6 +41,8 @@ export async function login(req: Request, res: Response) {
                 email: admin.email,
                 first_name: admin.first_name,
                 last_name: admin.last_name,
+                theme: admin.theme,
+                notifications_enabled: admin.notifications_enabled,
             },
         },
         'Login successful',
@@ -48,7 +50,16 @@ export async function login(req: Request, res: Response) {
 }
 
 export async function me(req: Request, res: Response) {
-    const admin = (req as any).admin;
+    const adminJwt = (req as any).admin;
+    const [rows] = await pool.execute(
+        'SELECT id, email, first_name, last_name, theme, notifications_enabled FROM admins WHERE id = ? LIMIT 1',
+        [adminJwt.id],
+    );
+    const admins = rows as any[];
+    if (admins.length === 0) {
+        return errorResponse(res, 'Admin not found', 404);
+    }
+    const admin = admins[0];
     return successResponse(res, { admin }, 'Authenticated admin');
 }
 

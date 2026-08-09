@@ -20,6 +20,7 @@ const app = express();
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(helmet({ crossOriginResourcePolicy: false }));
+app.use(cookieParser());
 
 // Webhook route must receive raw body for signature verification
 app.use('/api/payments/razorpay/webhook', express.raw({ type: 'application/json' }));

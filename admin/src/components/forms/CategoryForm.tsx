@@ -42,40 +42,40 @@ export function CategoryForm({ category, onClose, onSuccess }: Props) {
     };
 
     return (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
-            <div style={{ background: '#fff', padding: '24px', borderRadius: '8px', width: '100%', maxWidth: '500px' }}>
+        <div className="modal-backdrop" style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
+            <div className="card" style={{ width: '100%', maxWidth: '500px', margin: '0 16px' }}>
                 <h2 style={{ marginTop: 0, marginBottom: '24px' }}>{category ? 'Edit Category' : 'Add Category'}</h2>
                 
                 {error && <div style={{ color: '#ef4444', marginBottom: '16px', padding: '12px', background: '#fef2f2', borderRadius: '6px' }}>{error}</div>}
                 
                 <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '16px' }}>
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold' }}>Name</label>
+                    <div className="form-group">
+                        <label className="form-label">Name</label>
                         <input
                             type="text"
                             required
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db', boxSizing: 'border-box' }}
+                            className="form-input"
                         />
                     </div>
                     
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold' }}>Description</label>
+                    <div className="form-group">
+                        <label className="form-label">Description</label>
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             rows={3}
-                            style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db', boxSizing: 'border-box', fontFamily: 'inherit' }}
+                            className="form-input"
                         />
                     </div>
                     
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold' }}>Status</label>
+                    <div className="form-group">
+                        <label className="form-label">Status</label>
                         <select
                             value={status}
                             onChange={(e) => setStatus(e.target.value as any)}
-                            style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db', boxSizing: 'border-box' }}
+                            className="form-input"
                         >
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
@@ -83,8 +83,8 @@ export function CategoryForm({ category, onClose, onSuccess }: Props) {
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
-                        <button type="button" onClick={onClose} disabled={loading} style={{ padding: '8px 16px', background: '#e5e7eb', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
-                        <button type="submit" disabled={loading} style={{ padding: '8px 16px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+                        <button type="button" onClick={onClose} disabled={loading} className="btn btn-outline">Cancel</button>
+                        <button type="submit" disabled={loading} className="btn btn-primary">
                             {loading ? 'Saving...' : 'Save Category'}
                         </button>
                     </div>

@@ -114,21 +114,21 @@ export function ProductImagesModal({ product, onClose }: Props) {
     const API_BASE = (import.meta as any).env.VITE_API_URL ? (import.meta as any).env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
 
     return (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '24px' }}>
-            <div style={{ background: '#fff', padding: '24px', borderRadius: '8px', width: '100%', maxWidth: '800px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+        <div className="modal-backdrop">
+            <div className="card" style={{ width: '100%', maxWidth: '800px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                     <h2 style={{ margin: 0 }}>Images for: {product.name}</h2>
-                    <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280' }}>
+                    <button type="button" onClick={onClose} className="btn btn-ghost">
                         <X size={24} />
                     </button>
                 </div>
                 
-                {error && <div style={{ color: '#ef4444', marginBottom: '16px', padding: '12px', background: '#fef2f2', borderRadius: '6px' }}>{error}</div>}
+                {error && <div className="alert alert-error" style={{ marginBottom: '16px' }}>{error}</div>}
 
                 <div style={{ overflowY: 'auto', flex: 1, paddingRight: '12px' }}>
                     
                     {/* Upload Section */}
-                    <div style={{ border: '2px dashed #d1d5db', borderRadius: '8px', padding: '24px', textAlign: 'center', marginBottom: '24px', background: '#f9fafb' }}>
+                    <div style={{ border: '2px dashed var(--border)', borderRadius: '8px', padding: '24px', textAlign: 'center', marginBottom: '24px', background: 'var(--bg-subtle)' }}>
                         <input 
                             type="file" 
                             multiple 
@@ -138,31 +138,33 @@ export function ProductImagesModal({ product, onClose }: Props) {
                             style={{ display: 'none' }}
                             id="image-upload"
                         />
-                        <label htmlFor="image-upload" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 16px', background: '#e5e7eb', borderRadius: '6px', fontWeight: '500' }}>
+                        <label htmlFor="image-upload" className="btn btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                             <Upload size={18} /> Select Images
                         </label>
-                        <div style={{ marginTop: '8px', fontSize: '14px', color: '#6b7280' }}>JPG, PNG or WEBP. Max 5MB per file.</div>
+                        <div style={{ marginTop: '8px', fontSize: '14px', color: 'var(--text-muted)' }}>JPG, PNG or WEBP. Max 5MB per file.</div>
 
                         {selectedFiles.length > 0 && (
                             <div style={{ marginTop: '16px', textAlign: 'left' }}>
                                 <strong>Selected ({selectedFiles.length}):</strong>
-                                <ul style={{ listStyle: 'none', padding: 0, margin: '8px 0', fontSize: '14px', color: '#4b5563' }}>
+                                <ul style={{ listStyle: 'none', padding: 0, margin: '8px 0', fontSize: '14px', color: 'var(--text-muted)' }}>
                                     {selectedFiles.map((f, i) => (
                                         <li key={i}>{f.name} ({(f.size / 1024 / 1024).toFixed(2)} MB)</li>
                                     ))}
                                 </ul>
                                 <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
                                     <button 
+                                        type="button"
                                         onClick={handleUpload} 
                                         disabled={uploading}
-                                        style={{ padding: '8px 16px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
+                                        className="btn btn-primary"
                                     >
                                         {uploading ? 'Uploading...' : 'Upload Selected'}
                                     </button>
                                     <button 
+                                        type="button"
                                         onClick={() => { setSelectedFiles([]); if (fileInputRef.current) fileInputRef.current.value = ''; }}
                                         disabled={uploading}
-                                        style={{ padding: '8px 16px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '6px', cursor: 'pointer' }}
+                                        className="btn btn-outline"
                                     >
                                         Clear
                                     </button>
@@ -175,34 +177,36 @@ export function ProductImagesModal({ product, onClose }: Props) {
                     <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '18px' }}>Current Images</h3>
                     
                     {loading ? (
-                        <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>Loading images...</div>
+                        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading images...</div>
                     ) : images.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '40px', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#9ca3af' }}>
+                        <div style={{ textAlign: 'center', padding: '40px', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-muted)' }}>
                             <ImageIcon size={48} style={{ margin: '0 auto 12px' }} />
                             <div>No product images yet.</div>
                         </div>
                     ) : (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
                             {images.map((img, index) => (
-                                <div key={img.id} style={{ border: `2px solid ${img.is_primary ? '#3b82f6' : '#e5e7eb'}`, borderRadius: '8px', overflow: 'hidden', position: 'relative', background: '#fff' }}>
+                                <div key={img.id} className="card" style={{ border: `2px solid ${img.is_primary ? 'var(--primary)' : 'var(--border)'}`, padding: 0, position: 'relative' }}>
                                     {img.is_primary && (
-                                        <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#3b82f6', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', zIndex: 10 }}>
+                                        <div style={{ position: 'absolute', top: '8px', left: '8px', background: 'var(--primary)', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', zIndex: 10 }}>
                                             <Star size={14} fill="currentColor" /> Primary
                                         </div>
                                     )}
-                                    <div style={{ height: '150px', background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <div style={{ height: '150px', background: 'var(--bg-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         <img 
                                             src={`${API_BASE}${img.file_path}`} 
                                             alt={img.alt_text || 'Product Image'} 
                                             style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                                         />
                                     </div>
-                                    <div style={{ padding: '12px', background: '#f9fafb', borderTop: '1px solid #e5e7eb' }}>
+                                    <div style={{ padding: '12px', background: 'var(--bg-subtle)', borderTop: '1px solid var(--border)' }}>
                                         <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                                             {!img.is_primary && (
                                                 <button 
+                                                    type="button" 
                                                     onClick={() => handleSetPrimary(img.id)}
-                                                    style={{ flex: 1, padding: '4px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                                                    className="btn btn-outline"
+                                                    style={{ flex: 1, padding: '4px', fontSize: '12px' }}
                                                 >
                                                     Set Primary
                                                 </button>
@@ -211,23 +215,28 @@ export function ProductImagesModal({ product, onClose }: Props) {
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <div style={{ display: 'flex', gap: '4px' }}>
                                                 <button 
-                                                    onClick={() => handleMove(index, 'left')} 
+                                                    type="button"
                                                     disabled={index === 0}
-                                                    style={{ padding: '4px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '4px', cursor: index === 0 ? 'not-allowed' : 'pointer', opacity: index === 0 ? 0.5 : 1 }}
+                                                    onClick={() => handleReorder(img.id, 'up')}
+                                                    className="btn btn-outline"
+                                                    style={{ padding: '4px', cursor: index === 0 ? 'not-allowed' : 'pointer', opacity: index === 0 ? 0.5 : 1 }}
                                                     title="Move Left"
                                                 >
                                                     <ArrowLeft size={16} />
                                                 </button>
                                                 <button 
-                                                    onClick={() => handleMove(index, 'right')} 
+                                                    type="button"
                                                     disabled={index === images.length - 1}
-                                                    style={{ padding: '4px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '4px', cursor: index === images.length - 1 ? 'not-allowed' : 'pointer', opacity: index === images.length - 1 ? 0.5 : 1 }}
+                                                    onClick={() => handleReorder(img.id, 'down')}
+                                                    className="btn btn-outline"
+                                                    style={{ padding: '4px', cursor: index === images.length - 1 ? 'not-allowed' : 'pointer', opacity: index === images.length - 1 ? 0.5 : 1 }}
                                                     title="Move Right"
                                                 >
                                                     <ArrowRight size={16} />
                                                 </button>
                                             </div>
                                             <button 
+                                                type="button"
                                                 onClick={() => handleDelete(img.id)}
                                                 style={{ padding: '4px', background: '#fee2e2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: '4px', cursor: 'pointer' }}
                                                 title="Delete"

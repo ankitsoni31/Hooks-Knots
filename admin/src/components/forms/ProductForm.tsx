@@ -72,8 +72,8 @@ export function ProductForm({ product, onClose, onSuccess }: Props) {
     };
 
     return (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '24px' }}>
-            <div style={{ background: '#fff', padding: '24px', borderRadius: '8px', width: '100%', maxWidth: '700px', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div className="modal-backdrop" style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '16px' }}>
+            <div className="card" style={{ width: '100%', maxWidth: '700px', maxHeight: '90vh', overflowY: 'auto' }}>
                 <h2 style={{ marginTop: 0, marginBottom: '24px' }}>{product ? 'Edit Product' : 'Add Product'}</h2>
                 
                 {error && <div style={{ color: '#ef4444', marginBottom: '16px', padding: '12px', background: '#fef2f2', borderRadius: '6px' }}>{error}</div>}
@@ -196,9 +196,9 @@ export function ProductForm({ product, onClose, onSuccess }: Props) {
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
-                        <button type="button" onClick={onClose} disabled={loading} style={{ padding: '8px 16px', background: '#e5e7eb', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
-                        <button type="submit" disabled={loading} style={{ padding: '8px 16px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+                        <button type="button" onClick={onClose} disabled={loading} className="btn btn-outline">Cancel</button>
+                        <button type="submit" disabled={loading} className="btn btn-primary">
                             {loading ? 'Saving...' : 'Save Product'}
                         </button>
                     </div>

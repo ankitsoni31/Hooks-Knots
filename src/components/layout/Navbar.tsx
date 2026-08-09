@@ -10,10 +10,16 @@ import {
   X,
 } from "lucide-react";
 import { navLinks } from "@/data/homepage";
+import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { items } = useCart();
+  const { user, isAuthenticated } = useAuth();
+  
+  const cartItemsCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -87,26 +93,37 @@ export default function Navbar() {
                   2
                 </span>
               </button>
-              <button className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300 relative">
+              <Link to="/cart" className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300 relative block">
                 <ShoppingBag className="w-[18px] h-[18px]" />
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                  3
-                </span>
-              </button>
-              <button className="ml-2 px-5 py-2 text-sm font-medium bg-[#1F2937] text-white rounded-full hover:bg-[#C89B3C] transition-all duration-300 font-sans">
-                <User className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
-                Sign In
-              </button>
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </Link>
+              {isAuthenticated && user ? (
+                <Link to="/profile" className="ml-2 px-5 py-2 text-sm font-medium bg-[#1F2937] text-white rounded-full hover:bg-[#C89B3C] transition-all duration-300 font-sans">
+                  <User className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+                  {user.first_name}
+                </Link>
+              ) : (
+                <Link to="/login" className="ml-2 px-5 py-2 text-sm font-medium bg-[#1F2937] text-white rounded-full hover:bg-[#C89B3C] transition-all duration-300 font-sans">
+                  <User className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+                  Sign In
+                </Link>
+              )}
             </div>
 
             {/* Mobile Menu Toggle */}
             <div className="flex items-center gap-2 lg:hidden">
-              <button className="p-2 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] transition-colors relative">
+              <Link to="/cart" className="p-2 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] transition-colors relative block">
                 <ShoppingBag className="w-5 h-5" />
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                  3
-                </span>
-              </button>
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="p-2 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] transition-colors z-10"
@@ -184,10 +201,17 @@ export default function Navbar() {
                       </span>
                     </button>
                   </div>
-                  <button className="w-full px-5 py-3 text-sm font-medium bg-[#1F2937] text-white rounded-xl hover:bg-[#C89B3C] transition-all duration-300 font-sans">
-                    <User className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
-                    Sign In
-                  </button>
+                  {isAuthenticated && user ? (
+                    <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)} className="w-full px-5 py-3 text-sm font-medium bg-[#1F2937] text-white rounded-xl hover:bg-[#C89B3C] transition-all duration-300 font-sans block text-center">
+                      <User className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+                      {user.first_name}
+                    </Link>
+                  ) : (
+                    <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="w-full px-5 py-3 text-sm font-medium bg-[#1F2937] text-white rounded-xl hover:bg-[#C89B3C] transition-all duration-300 font-sans block text-center">
+                      <User className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
+                      Sign In
+                    </Link>
+                  )}
                 </div>
               </div>
             </motion.div>

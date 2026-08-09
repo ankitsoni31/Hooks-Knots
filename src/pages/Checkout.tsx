@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
+import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
 import { ShoppingBag, Loader2, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -10,11 +11,30 @@ export default function Checkout() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const { user, isAuthenticated, isLoading } = useAuth();
+
+    useEffect(() => {
+        if (!isLoading && !isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isLoading, isAuthenticated, navigate]);
     
     const [formData, setFormData] = useState({
         first_name: '', last_name: '', email: '', phone: '',
         address_line: '', city: '', state: '', pincode: '', country: 'India'
     });
+
+    useEffect(() => {
+        if (user) {
+            setFormData(prev => ({
+                ...prev,
+                first_name: user.first_name || '',
+                last_name: user.last_name || '',
+                email: user.email || '',
+                phone: user.phone || ''
+            }));
+        }
+    }, [user]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -99,6 +119,14 @@ export default function Checkout() {
             setLoading(false);
         }
     };
+
+    if (isLoading) {
+        return (
+            <div className="pt-32 pb-20 min-h-screen bg-[#F8F6F2] flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-[#C89B3C]" />
+            </div>
+        );
+    }
 
     if (items.length === 0) {
         return (

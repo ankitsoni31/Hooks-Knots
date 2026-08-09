@@ -39,9 +39,9 @@ export default function OrderDetailPage() {
     };
 
     if (loading) return <div style={{ padding: 24, textAlign: 'center' }}>Loading...</div>;
-    if (error || !order) return <div style={{ padding: 24, color: '#ef4444' }}>{error || 'Order not found'}</div>;
+    if (error || !order) return <div style={{ padding: 24, color: 'var(--danger)' }}>{error || 'Order not found'}</div>;
 
-    const sc = STATUS_COLORS[order.status] || { bg: '#f3f4f6', color: '#374151' };
+    const sc = STATUS_COLORS[order.status] || { bg: 'var(--bg-root)', color: 'var(--text-secondary)' };
     const nextStatuses = STATUS_TRANSITIONS[order.status] || [];
 
     return (
@@ -58,20 +58,20 @@ export default function OrderDetailPage() {
                 <span style={{ padding: '6px 14px', borderRadius: 9999, background: sc.bg, color: sc.color, fontWeight: 600, fontSize: 14 }}>{order.status}</span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {/* Customer */}
-                <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: 20 }}>
-                    <h3 style={{ margin: '0 0 12px', fontSize: 15, color: '#374151' }}>Customer</h3>
-                    <div style={{ display: 'grid', gap: 6, fontSize: 14 }}>
-                        <div><strong>{order.first_name} {order.last_name}</strong></div>
-                        <div style={{ color: '#6b7280' }}>{order.email}</div>
-                        <div style={{ color: '#6b7280' }}>{order.customer_phone || '—'}</div>
+                <div className="card">
+                    <h3 className="text-lg font-semibold mb-3">Customer</h3>
+                    <div className="grid gap-2 text-sm">
+                        <div className="font-semibold">{order.first_name} {order.last_name}</div>
+                        <div className="text-muted">{order.email}</div>
+                        <div className="text-muted">{order.customer_phone || '—'}</div>
                     </div>
                 </div>
 
                 {/* Shipping Address */}
-                <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: 20 }}>
-                    <h3 style={{ margin: '0 0 12px', fontSize: 15, color: '#374151' }}>Shipping Address</h3>
+                <div className="card">
+                    <h3 className="text-lg font-semibold mb-3">Shipping Address</h3>
                     {order.shipping_address ? (
                         <div style={{ fontSize: 14, display: 'grid', gap: 4 }}>
                             <div><strong>{order.shipping_name}</strong></div>
@@ -88,8 +88,8 @@ export default function OrderDetailPage() {
 
             {/* Payment Details */}
             {order.payment && (
-                <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: 20, marginBottom: 24 }}>
-                    <h3 style={{ margin: '0 0 12px', fontSize: 15, color: '#374151' }}>Payment Information</h3>
+                <div className="card mb-6">
+                    <h3 className="text-lg font-semibold mb-3">Payment Information</h3>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, fontSize: 14 }}>
                         <div><span style={{ color: '#6b7280', display: 'block', marginBottom: 4 }}>Status</span>
                             <span style={{ padding: '3px 8px', borderRadius: 4, fontSize: 12, fontWeight: 600, background: order.payment.payment_status === 'SUCCESS' ? '#dcfce7' : order.payment.payment_status === 'FAILED' ? '#fee2e2' : '#f3f4f6', color: order.payment.payment_status === 'SUCCESS' ? '#166534' : order.payment.payment_status === 'FAILED' ? '#991b1b' : '#374151' }}>
@@ -108,11 +108,11 @@ export default function OrderDetailPage() {
             )}
 
             {/* Order Items */}
-            <div style={{ marginBottom: 24 }}>
-                <h2 style={{ fontSize: 18, marginBottom: 12 }}>Items</h2>
-                <div style={{ background: '#fff', borderRadius: 8, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                        <thead style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+            <div className="mb-6">
+                <h2 className="text-lg font-semibold mb-3">Items</h2>
+                <div className="table-container">
+                    <table className="table">
+                        <thead>
                             <tr>
                                 {['Product', 'SKU', 'Unit Price', 'Qty', 'Subtotal'].map(h => (
                                     <th key={h} style={{ padding: '10px 16px', fontWeight: 600, color: '#4b5563', fontSize: 13 }}>{h}</th>
@@ -135,10 +135,10 @@ export default function OrderDetailPage() {
             </div>
 
             {/* Totals + Status Update */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Order Summary */}
-                <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: 20 }}>
-                    <h3 style={{ margin: '0 0 16px', fontSize: 15, color: '#374151' }}>Order Summary</h3>
+                <div className="card">
+                    <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
                     <div style={{ display: 'grid', gap: 10, fontSize: 14 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6b7280' }}>Subtotal</span><span>₹{Number(order.subtotal).toFixed(2)}</span></div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6b7280' }}>Discount</span><span>— ₹{Number(order.discount).toFixed(2)}</span></div>
@@ -150,8 +150,8 @@ export default function OrderDetailPage() {
                 </div>
 
                 {/* Status Update */}
-                <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: 20 }}>
-                    <h3 style={{ margin: '0 0 16px', fontSize: 15, color: '#374151' }}>Update Status</h3>
+                <div className="card">
+                    <h3 className="text-lg font-semibold mb-4">Update Status</h3>
                     {nextStatuses.length === 0 ? (
                         <p style={{ color: '#9ca3af', fontSize: 14 }}>No further transitions available for <strong>{order.status}</strong>.</p>
                     ) : (

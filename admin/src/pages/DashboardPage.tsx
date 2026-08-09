@@ -38,25 +38,31 @@ function DashboardPage() {
 
     return (
         <div>
-            <div style={{ marginBottom: '24px' }}>
-                <p style={{ margin: 0, fontSize: '0.9rem', color: '#6b7280' }}>Dashboard</p>
-                <h2 style={{ margin: '8px 0 0', color: '#111827' }}>Welcome back</h2>
+            <div className="mb-6 flex justify-between items-center">
+                <div>
+                    <h2 className="text-xl font-semibold">Welcome back</h2>
+                    <p className="text-muted" style={{ fontSize: '0.875rem' }}>Here is what's happening with your store today.</p>
+                </div>
             </div>
 
-            {loading && <p style={{ color: '#6b7280' }}>Loading stats...</p>}
+            {loading && <p className="text-muted mb-4">Loading stats...</p>}
 
-            <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', marginBottom: '24px' }}>
+            <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', marginBottom: '32px' }}>
                 {cards.map((item) => (
-                    <div key={item.label} style={{ background: '#f8fafc', border: '1px solid #e5e7eb', borderRadius: '16px', padding: '20px' }}>
-                        <p style={{ margin: 0, color: '#6b7280', fontSize: '0.85rem' }}>{item.label}</p>
-                        <p style={{ margin: '12px 0 0', fontSize: '1.75rem', color: '#111827', fontWeight: 700 }}>{item.value}</p>
+                    <div key={item.label} className="card">
+                        <p className="text-muted" style={{ margin: 0, fontSize: '0.875rem', fontWeight: 500 }}>{item.label}</p>
+                        <p style={{ margin: '12px 0 0', fontSize: '2rem', color: 'var(--text-primary)', fontWeight: 700 }}>{item.value}</p>
                     </div>
                 ))}
             </div>
 
-            <section style={{ background: '#f8fafc', border: '1px solid #e5e7eb', borderRadius: '16px', padding: '24px' }}>
-                <h3 style={{ margin: 0, color: '#111827' }}>Recent Orders</h3>
-                <p style={{ marginTop: '12px', color: '#6b7280' }}>Visit the <a href="/orders" style={{ color: '#2563eb' }}>Orders</a> page to manage all orders.</p>
+            <section className="card">
+                <h3 className="font-semibold text-lg" style={{ margin: 0, color: 'var(--text-primary)' }}>Quick Actions</h3>
+                <p className="text-muted" style={{ marginTop: '8px', fontSize: '0.875rem' }}>Manage your store easily from here.</p>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                    <a href="/orders" className="btn btn-primary">View Recent Orders</a>
+                    <a href="/products" className="btn btn-outline">Manage Products</a>
+                </div>
             </section>
         </div>
     );
