@@ -7,8 +7,9 @@ import { ShoppingBag, Loader2, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Checkout() {
-    const { items, total, clearCart } = useCart();
+    const { items, clearCart } = useCart();
     const navigate = useNavigate();
+    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const { user, isAuthenticated, isLoading } = useAuth();
