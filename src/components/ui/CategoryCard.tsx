@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { Category } from "@/data/homepage";
+import type { ApiCategory } from "@/types/api";
 
 interface CategoryCardProps {
-  category: Category;
+  category: ApiCategory;
   index: number;
 }
 
@@ -13,7 +13,7 @@ const MotionLink = motion.create(Link);
 export default function CategoryCard({ category, index }: CategoryCardProps) {
   return (
     <MotionLink
-      to={`/shop/${category.id}`}
+      to={`/shop/${category.slug}`}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-30px" }}
@@ -23,7 +23,7 @@ export default function CategoryCard({ category, index }: CategoryCardProps) {
       {/* Category Image */}
       <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#F8F6F2]">
         <img
-          src={category.image}
+          src="/images/hero-bouquet.png"
           alt={category.name}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
@@ -36,7 +36,7 @@ export default function CategoryCard({ category, index }: CategoryCardProps) {
         {/* Icon Floating */}
         <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-white rounded-full border-4 border-white flex items-center justify-center shadow-sm">
           <span className="text-xl" role="img" aria-label={category.name}>
-            {category.icon}
+            🌸
           </span>
         </div>
 
@@ -48,7 +48,7 @@ export default function CategoryCard({ category, index }: CategoryCardProps) {
           {category.description}
         </p>
         <span className="text-xs font-semibold tracking-wider text-[#C89B3C] uppercase font-sans">
-          {category.itemCount} Products
+          {category.product_count || 0} Products
         </span>
 
         {/* Arrow on hover */}
