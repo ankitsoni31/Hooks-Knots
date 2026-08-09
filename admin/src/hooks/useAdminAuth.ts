@@ -19,10 +19,16 @@ export function useAdminAuth() {
 
     useEffect(() => {
         async function loadAdmin() {
+            const token = localStorage.getItem('admin_token');
+            if (!token) {
+                setState({ isAuthenticated: false, isLoading: false, admin: null });
+                return;
+            }
             try {
                 const admin = await getCurrentAdmin();
                 setState({ isAuthenticated: true, isLoading: false, admin });
             } catch {
+                localStorage.removeItem('admin_token');
                 setState({ isAuthenticated: false, isLoading: false, admin: null });
             }
         }

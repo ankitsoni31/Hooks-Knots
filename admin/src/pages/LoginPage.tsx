@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
 import type { LoginRequest } from '../types/api';
 
@@ -9,7 +8,6 @@ function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -19,7 +17,7 @@ function LoginPage() {
         try {
             const payload: LoginRequest = { email, password };
             await login(payload);
-            navigate('/dashboard', { replace: true });
+            window.location.href = '/dashboard';
         } catch (err) {
             setError('Invalid email or password.');
         } finally {

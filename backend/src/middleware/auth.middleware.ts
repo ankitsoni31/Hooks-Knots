@@ -9,7 +9,11 @@ export interface AuthenticatedAdmin {
 }
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
-    const token = req.cookies?.authToken as string | undefined;
+    let token = req.cookies?.authToken as string | undefined;
+
+    if (!token && req.headers.authorization?.startsWith('Bearer ')) {
+        token = req.headers.authorization.split(' ')[1];
+    }
 
     if (!token) {
         return errorResponse(res, 'Authentication required', 401);

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { listCategories, getCategory, createCategory, updateCategory, deleteCategory } from '../controllers/categoryController.js';
 import { listProducts, getProduct, createProduct, updateProduct, deleteProduct } from '../controllers/productController.js';
-import { dashboard } from '../controllers/adminController.js';
+import { dashboard, updateProfile, changePassword } from '../controllers/adminController.js';
 import { listCustomers, getCustomer, getCustomerAddresses } from '../controllers/customerController.js';
 import { listOrders, getOrder, updateOrderStatus } from '../controllers/orderController.js';
 import { listPayments, getPayment } from '../controllers/paymentController.js';
@@ -12,6 +12,8 @@ const router = Router();
 router.use(requireAuth);
 
 router.get('/dashboard', dashboard);
+router.put('/profile', updateProfile);
+router.put('/password', changePassword);
 
 // Categories
 router.get('/categories', listCategories);

@@ -18,17 +18,15 @@ dotenv.config();
 
 const app = express();
 
-app.use(helmet());
+app.use(cors({ origin: true, credentials: true }));
+app.use(helmet({ crossOriginResourcePolicy: false }));
 
-// ─── IMPORTANT: Webhook route must receive raw body for signature verification ───
-// Mount raw-body middleware BEFORE express.json() for the webhook path only
+// Webhook route must receive raw body for signature verification
 app.use('/api/payments/razorpay/webhook', express.raw({ type: 'application/json' }));
 
 // General JSON parsing for all other routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
