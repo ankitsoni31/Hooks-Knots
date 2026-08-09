@@ -34,7 +34,21 @@ export async function createOrder(req: Request, res: Response) {
         // 1. Validate + create local order (server-side price calc, no stock deduction yet)
         const order = await orderService.createOrder(data);
 
-        // 2. Create Razorpay order
+        // 2. Send Confirmation Email safely
+        try {
+            const fullOrder = await orderService.getOrderById(order.order_id);
+            if (fullOrder) {
+                const { sendOrderConfirmationEmail } = await import('../services/emailService.js');
+                // Fire and forget, don't wait for it to finish and block the API response
+                sendOrderConfirmationEmail(fullOrder).catch(err => {
+                    console.error('[createOrder] Failed to send confirmation email in background:', err);
+                });
+            }
+        } catch (emailErr) {
+            console.error('[createOrder] Error fetching order for email:', emailErr);
+        }
+
+        // 3. Create Razorpay order
         let razorpayData = null;
         try {
             razorpayData = await paymentService.createRazorpayOrder({
@@ -58,20 +72,6 @@ export async function createOrder(req: Request, res: Response) {
                 }, 'Order created (Razorpay not configured)', 201);
             }
             throw rzpErr;
-        }
-
-        // 3. Send Confirmation Email safely
-        try {
-            const fullOrder = await orderService.getOrderById(order.order_id);
-            if (fullOrder) {
-                const { sendOrderConfirmationEmail } = await import('../services/emailService.js');
-                // Fire and forget, don't wait for it to finish and block the API response
-                sendOrderConfirmationEmail(fullOrder).catch(err => {
-                    console.error('[createOrder] Failed to send confirmation email in background:', err);
-                });
-            }
-        } catch (emailErr) {
-            console.error('[createOrder] Error fetching order for email:', emailErr);
         }
 
         return successResponse(res, {
