@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
-import { ShoppingBag, Loader2, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, Loader2, ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Checkout() {
-    const { items, clearCart } = useCart();
+    const { items, clearCart, updateQuantity, removeItem } = useCart();
     const navigate = useNavigate();
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     
@@ -15,6 +15,19 @@ export default function Checkout() {
     const [appliedCoupon, setAppliedCoupon] = useState<{code: string; discount_amount: number} | null>(null);
     const [couponLoading, setCouponLoading] = useState(false);
     const [couponMessage, setCouponMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+
+    // If subtotal changes, remove the coupon to prevent incorrect discount amounts
+    const [prevSubtotal, setPrevSubtotal] = useState(subtotal);
+    useEffect(() => {
+        if (subtotal !== prevSubtotal) {
+            setPrevSubtotal(subtotal);
+            if (appliedCoupon) {
+                setAppliedCoupon(null);
+                setCouponCode('');
+                setCouponMessage({ type: 'error', text: 'Cart updated. Please re-apply your coupon.' });
+            }
+        }
+    }, [subtotal, prevSubtotal, appliedCoupon]);
     
     const discount = appliedCoupon ? appliedCoupon.discount_amount : 0;
     const total = subtotal - discount; // Shipping is 0
@@ -217,16 +230,33 @@ export default function Checkout() {
                         <h3 className="font-serif text-2xl text-[#1F2937] mb-6">Order Summary</h3>
                         <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2">
                             {items.map(item => (
-                                <div key={item.product_id} className="flex gap-4">
+                                <div key={item.product_id} className="flex gap-4 group">
                                     <div className="w-20 h-20 bg-[#F8F6F2] rounded-xl overflow-hidden shrink-0">
                                         <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="flex-1 flex flex-col justify-center">
-                                        <h4 className="font-serif font-bold text-[#1F2937]">{item.name}</h4>
-                                        <div className="text-sm text-[#5A5A5A] mt-1">Qty: {item.quantity} × ₹{item.price}</div>
+                                        <div className="flex justify-between items-start">
+                                            <h4 className="font-serif font-bold text-[#1F2937] line-clamp-1">{item.name}</h4>
+                                            <button 
+                                                type="button"
+                                                onClick={() => removeItem(item.product_id)} 
+                                                className="text-red-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100 p-1"
+                                                title="Remove item"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                        <div className="flex items-center gap-4 mt-2">
+                                            <div className="flex items-center gap-2 border border-[#DCCFC0]/30 rounded-lg p-1 bg-[#F8F6F2]">
+                                                <button type="button" onClick={() => updateQuantity(item.product_id, item.quantity - 1)} className="p-1 hover:bg-white rounded-md text-[#5A5A5A] hover:text-[#1F2937] transition-colors"><Minus className="w-3 h-3" /></button>
+                                                <span className="text-sm font-bold w-6 text-center font-sans">{item.quantity}</span>
+                                                <button type="button" onClick={() => updateQuantity(item.product_id, item.quantity + 1)} className="p-1 hover:bg-white rounded-md text-[#5A5A5A] hover:text-[#1F2937] transition-colors"><Plus className="w-3 h-3" /></button>
+                                            </div>
+                                            <div className="text-sm text-[#5A5A5A] font-sans">× ₹{item.price.toLocaleString("en-IN")}</div>
+                                        </div>
                                     </div>
-                                    <div className="font-bold text-[#1F2937] flex items-center">
-                                        ₹{item.price * item.quantity}
+                                    <div className="font-bold text-[#1F2937] flex items-center shrink-0 font-sans">
+                                        ₹{(item.price * item.quantity).toLocaleString("en-IN")}
                                     </div>
                                 </div>
                             ))}
