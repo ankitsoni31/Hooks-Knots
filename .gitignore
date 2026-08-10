@@ -11,9 +11,11 @@ coverage/
 backend/.env
 admin/.env
 
-# Uploads and temporary data
+# Uploads and temporary data (keep .gitkeep to preserve folder structure)
 backend/uploads/
 uploads/
+!backend/uploads/**/.gitkeep
+!uploads/**/.gitkeep
 
 # Logs
 *.log

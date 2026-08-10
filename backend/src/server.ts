@@ -39,7 +39,8 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+// __dirname at runtime = backend/dist  =>  ../../uploads = backend/uploads (correct)
+app.use('/uploads', express.static(path.resolve(__dirname, '..', '..', 'uploads')));
 
 app.get('/api/health', (_req, res) => {
     res.json({ success: true, message: 'Hooks-Knots API is running' });

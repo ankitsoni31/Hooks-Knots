@@ -2,6 +2,14 @@ import { pool } from '../config/db.js';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import fs from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Absolute path to backend/uploads/products
+// __dirname at runtime = backend/dist/services  =>  ../../../uploads/products = backend/uploads/products
+const UPLOADS_DIR = path.resolve(__dirname, '..', '..', '..', 'uploads', 'products');
 
 export interface ProductImage {
     id: number;
@@ -30,16 +38,29 @@ export async function uploadImages(productId: number, files: Express.Multer.File
         const isPrimary = !hasPrimary;
         hasPrimary = true; // Set to true after first one
 
+        // Store only the public URL path in DB — never a Windows filesystem path
         const filePath = `/uploads/products/${file.filename}`;
-        
-        const [result] = await pool.query<ResultSetHeader>(
-            'INSERT INTO product_images (product_id, file_path, is_primary, display_order) VALUES (?, ?, ?, ?)',
-            [productId, filePath, isPrimary ? 1 : 0, nextOrder]
-        );
-        
+
+        let insertId: number;
+        try {
+            const [result] = await pool.query<ResultSetHeader>(
+                'INSERT INTO product_images (product_id, file_path, is_primary, display_order) VALUES (?, ?, ?, ?)',
+                [productId, filePath, isPrimary ? 1 : 0, nextOrder]
+            );
+            insertId = result.insertId;
+        } catch (dbError) {
+            // Clean up the uploaded file if DB insert fails
+            try {
+                await fs.unlink(path.join(UPLOADS_DIR, file.filename));
+            } catch {
+                // Ignore cleanup errors
+            }
+            throw dbError;
+        }
+
         nextOrder++;
 
-        const [rows] = await pool.query<RowDataPacket[]>('SELECT * FROM product_images WHERE id = ?', [result.insertId]);
+        const [rows] = await pool.query<RowDataPacket[]>('SELECT * FROM product_images WHERE id = ?', [insertId]);
         insertedImages.push(rows[0] as ProductImage);
     }
 
@@ -89,15 +110,14 @@ export async function deleteImage(productId: number, imageId: number): Promise<b
     
     const image = rows[0] as ProductImage;
     
-    // Delete from DB
+    // Delete from DB first
     await pool.query('DELETE FROM product_images WHERE id = ?', [imageId]);
     
-    // Delete physical file safely
+    // Delete physical file safely using absolute path
     try {
-        // Extract filename from file_path, e.g. /uploads/products/xyz.jpg -> xyz.jpg
         const filename = image.file_path.split('/').pop();
         if (filename) {
-            const absolutePath = path.join(process.cwd(), 'uploads', 'products', filename);
+            const absolutePath = path.join(UPLOADS_DIR, filename);
             await fs.unlink(absolutePath);
         }
     } catch (e) {
