@@ -1,6 +1,7 @@
 import { pool } from '../config/db.js';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 import { findOrCreateCustomer, createAddress } from './customerService.js';
+import { validateCoupon } from './couponService.js';
 
 const SHIPPING_CHARGE = 0; // Free shipping for now — easy to change here
 const VALID_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
@@ -28,6 +29,7 @@ export async function createOrder(data: {
     customer: { first_name: string; last_name: string; email: string; phone?: string };
     address: { full_name: string; phone?: string; address_line: string; city: string; state: string; pincode: string; country: string };
     items: { product_id: number; quantity: number }[];
+    coupon_code?: string;
 }) {
     const connection = await pool.getConnection();
     try {
@@ -71,7 +73,19 @@ export async function createOrder(data: {
             });
         }
 
-        const discount = 0; // No coupon system yet
+        let discount = 0;
+        let couponId: number | null = null;
+        
+        if (data.coupon_code) {
+            try {
+                const couponRes = await validateCoupon(data.coupon_code, subtotal);
+                discount = couponRes.discount_amount;
+                couponId = couponRes.id;
+            } catch (e: any) {
+                throw new Error(`INVALID_COUPON:${e.message}`);
+            }
+        }
+        
         const shipping = SHIPPING_CHARGE;
         const total = subtotal - discount + shipping;
 
@@ -88,18 +102,22 @@ export async function createOrder(data: {
         // 5. Create order with shipping snapshot
         const [orderResult] = await connection.query<ResultSetHeader>(`
             INSERT INTO orders (
-                customer_id, address_id, order_number, status, subtotal, discount, shipping, total,
+                customer_id, address_id, coupon_id, order_number, status, subtotal, discount, shipping, total,
                 shipping_name, shipping_phone, shipping_address, shipping_city, 
                 shipping_state, shipping_pincode, shipping_country
-            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         `, [
-            customerId, addressId, orderNumber, 'PENDING',
+            customerId, addressId, couponId, orderNumber, 'PENDING',
             subtotal, discount, shipping, total,
             data.address.full_name, data.address.phone || null,
             data.address.address_line, data.address.city,
             data.address.state, data.address.pincode, data.address.country
         ]);
         const orderId = orderResult.insertId;
+        
+        if (couponId) {
+            await connection.query('UPDATE coupons SET used_count = used_count + 1 WHERE id = ?', [couponId]);
+        }
 
         // 6. Create order items
         for (const item of orderItems) {

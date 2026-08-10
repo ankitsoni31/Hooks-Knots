@@ -88,10 +88,26 @@ CREATE TABLE IF NOT EXISTS addresses (
   FOREIGN KEY (customer_id) REFERENCES customers(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS coupons (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(50) NOT NULL UNIQUE,
+  discount_type VARCHAR(50) NOT NULL DEFAULT 'PERCENTAGE',
+  discount_value DECIMAL(10,2) NOT NULL,
+  min_order_amount DECIMAL(10,2),
+  max_discount_amount DECIMAL(10,2),
+  usage_limit INT,
+  used_count INT NOT NULL DEFAULT 0,
+  expires_at TIMESTAMP NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS orders (
   id INT AUTO_INCREMENT PRIMARY KEY,
   customer_id INT NOT NULL,
   address_id INT NOT NULL,
+  coupon_id INT NULL,
   order_number VARCHAR(100) NOT NULL UNIQUE,
   status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
   subtotal DECIMAL(10,2) NOT NULL,
@@ -109,7 +125,8 @@ CREATE TABLE IF NOT EXISTS orders (
   placed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (customer_id) REFERENCES customers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-  FOREIGN KEY (address_id) REFERENCES addresses(id) ON UPDATE CASCADE ON DELETE RESTRICT
+  FOREIGN KEY (address_id) REFERENCES addresses(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  FOREIGN KEY (coupon_id) REFERENCES coupons(id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS order_items (
@@ -153,3 +170,11 @@ CREATE INDEX idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX idx_order_items_product_id ON order_items(product_id);
 CREATE INDEX idx_customers_email ON customers(email);
 CREATE INDEX idx_addresses_customer_id ON addresses(customer_id);
+
+-- Default Admin
+INSERT IGNORE INTO admins (email, password_hash, first_name, last_name, role)
+VALUES ('admin@gmail.com', '$2b$10$6.gSURno/L6W6eF/b11Quup9nPEIaaxeOQip8To4zpN7YBSdODUgO', 'Admin', 'User', 'admin');
+
+-- Default User
+INSERT IGNORE INTO customers (email, password_hash, first_name, last_name, is_verified)
+VALUES ('user@gmail.com', '$2b$10$6.gSURno/L6W6eF/b11Quup9nPEIaaxeOQip8To4zpN7YBSdODUgO', 'Yash', 'User', TRUE);

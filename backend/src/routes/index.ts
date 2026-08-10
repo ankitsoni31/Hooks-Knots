@@ -7,6 +7,7 @@ import customerRoutes from './customerRoutes.js';
 import addressRoutes from './addressRoutes.js';
 import paymentRoutes from './paymentRoutes.js';
 import adminRoutes from './adminRoutes.js';
+import couponRoutes from './couponRoutes.js';
 import userAuthRoutes from './userAuthRoutes.js';
 import userProfileRoutes from './userProfileRoutes.js';
 
@@ -20,6 +21,7 @@ router.use('/customers', customerRoutes);
 router.use('/addresses', addressRoutes);
 router.use('/payments', paymentRoutes);
 router.use('/admin', adminRoutes);
+router.use('/coupons', couponRoutes);
 router.use('/auth/user', userAuthRoutes);
 router.use('/user', userProfileRoutes);
 

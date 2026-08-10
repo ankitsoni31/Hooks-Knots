@@ -6,35 +6,37 @@ interface AuthState {
     isAuthenticated: boolean;
     isLoading: boolean;
     admin: Admin | null;
+    mutate: () => Promise<void>;
 }
 
 const initialState: AuthState = {
     isAuthenticated: false,
     isLoading: true,
     admin: null,
+    mutate: async () => {},
 };
 
 export function useAdminAuth() {
     const [state, setState] = useState<AuthState>(initialState);
 
-    useEffect(() => {
-        async function loadAdmin() {
-            const token = localStorage.getItem('admin_token');
-            if (!token) {
-                setState({ isAuthenticated: false, isLoading: false, admin: null });
-                return;
-            }
-            try {
-                const admin = await getCurrentAdmin();
-                setState({ isAuthenticated: true, isLoading: false, admin });
-            } catch {
-                localStorage.removeItem('admin_token');
-                setState({ isAuthenticated: false, isLoading: false, admin: null });
-            }
+    const loadAdmin = async () => {
+        const token = localStorage.getItem('admin_token');
+        if (!token) {
+            setState(s => ({ ...s, isAuthenticated: false, isLoading: false, admin: null }));
+            return;
         }
+        try {
+            const admin = await getCurrentAdmin();
+            setState(s => ({ ...s, isAuthenticated: true, isLoading: false, admin }));
+        } catch {
+            localStorage.removeItem('admin_token');
+            setState(s => ({ ...s, isAuthenticated: false, isLoading: false, admin: null }));
+        }
+    };
 
+    useEffect(() => {
         loadAdmin();
     }, []);
 
-    return state;
+    return { ...state, mutate: loadAdmin };
 }

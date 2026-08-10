@@ -7,6 +7,7 @@ import { useAdminAuth } from './hooks/useAdminAuth';
 import { LoadingScreen } from './components/LoadingScreen';
 import ProductsPage from './pages/ProductsPage';
 import CategoriesPage from './pages/CategoriesPage';
+import CouponsPage from './pages/CouponsPage';
 import CustomersPage from './pages/CustomersPage';
 import CustomerDetailPage from './pages/CustomerDetailPage';
 import OrdersPage from './pages/OrdersPage';
@@ -38,6 +39,7 @@ function App() {
             <Route path="/dashboard" element={<ProtectedRoute isAuthenticated={isAuthenticated}><DashboardPage /></ProtectedRoute>} />
             <Route path="/products" element={<ProtectedRoute isAuthenticated={isAuthenticated}><ProductsPage /></ProtectedRoute>} />
             <Route path="/categories" element={<ProtectedRoute isAuthenticated={isAuthenticated}><CategoriesPage /></ProtectedRoute>} />
+            <Route path="/coupons" element={<ProtectedRoute isAuthenticated={isAuthenticated}><CouponsPage /></ProtectedRoute>} />
             <Route path="/customers" element={<ProtectedRoute isAuthenticated={isAuthenticated}><CustomersPage /></ProtectedRoute>} />
             <Route path="/customers/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated}><CustomerDetailPage /></ProtectedRoute>} />
             <Route path="/orders" element={<ProtectedRoute isAuthenticated={isAuthenticated}><OrdersPage /></ProtectedRoute>} />

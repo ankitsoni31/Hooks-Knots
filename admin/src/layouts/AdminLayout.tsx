@@ -7,6 +7,7 @@ const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: '📊' },
     { label: 'Products', path: '/products', icon: '📦' },
     { label: 'Categories', path: '/categories', icon: '📁' },
+    { label: 'Coupons', path: '/coupons', icon: '🎟️' },
     { label: 'Orders', path: '/orders', icon: '🛒' },
     { label: 'Customers', path: '/customers', icon: '👥' },
     { label: 'Payments', path: '/payments', icon: '💳' },

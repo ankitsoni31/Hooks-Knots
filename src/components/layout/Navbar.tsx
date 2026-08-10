@@ -12,14 +12,17 @@ import {
 import { navLinks } from "@/data/homepage";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
+import { useWishlist } from "@/hooks/useWishlist";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { items } = useCart();
   const { user, isAuthenticated } = useAuth();
+  const { items: wishlistItems } = useWishlist();
   
   const cartItemsCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const wishlistCount = wishlistItems.length;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,9 +92,11 @@ export default function Navbar() {
               </button>
               <button className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300 relative">
                 <Heart className="w-[18px] h-[18px]" />
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                  2
-                </span>
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
               </button>
               <Link to="/cart" className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300 relative block">
                 <ShoppingBag className="w-[18px] h-[18px]" />
@@ -196,9 +201,11 @@ export default function Navbar() {
                     </button>
                     <button className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#F8F6F2] transition-all relative">
                       <Heart className="w-5 h-5" />
-                      <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                        2
-                      </span>
+                      {wishlistCount > 0 && (
+                        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                          {wishlistCount}
+                        </span>
+                      )}
                     </button>
                   </div>
                   {isAuthenticated && user ? (

@@ -25,6 +25,7 @@ const createOrderSchema = z.object({
         product_id: z.number({ coerce: true }).int().positive('Invalid product'),
         quantity: z.number({ coerce: true }).int().min(1, 'Quantity must be at least 1'),
     })).min(1, 'Order must have at least one item'),
+    coupon_code: z.string().optional(),
 });
 
 export async function createOrder(req: Request, res: Response) {
@@ -92,6 +93,9 @@ export async function createOrder(req: Request, res: Response) {
         }
         if (error.message?.startsWith('INSUFFICIENT_STOCK')) {
             return errorResponse(res, `Insufficient stock for "${error.message.split(':')[1]}"`, 400);
+        }
+        if (error.message?.startsWith('INVALID_COUPON')) {
+            return errorResponse(res, `Coupon error: ${error.message.split(':')[1]}`, 400);
         }
         console.error('[createOrder] Error:', error);
         return errorResponse(res, 'Failed to create order', 500);

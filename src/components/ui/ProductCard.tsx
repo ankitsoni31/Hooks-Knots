@@ -3,6 +3,7 @@ import { ShoppingBag, Heart, Star, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import type { ApiProduct } from "@/types/api";
 
 interface ProductCardProps {
@@ -11,9 +12,10 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, index }: ProductCardProps) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const navigate = useNavigate();
   const { addItem } = useCart();
+  const { hasItem, toggleItem } = useWishlist();
+  const isWishlisted = hasItem(product.id);
 
   // Handle prices (sometimes string from DB, sometimes number)
   const price = Number(product.discount_price || product.price);
@@ -60,7 +62,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
 
         {/* Wishlist Button */}
         <button
-          onClick={() => setIsWishlisted(!isWishlisted)}
+          onClick={() => toggleItem(product.id)}
           className="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-sm hover:bg-white transition-all duration-300 hover:scale-110 z-10"
         >
           <Heart

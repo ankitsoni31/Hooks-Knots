@@ -9,7 +9,16 @@ import { motion } from 'framer-motion';
 export default function Checkout() {
     const { items, clearCart } = useCart();
     const navigate = useNavigate();
-    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    
+    const [couponCode, setCouponCode] = useState('');
+    const [appliedCoupon, setAppliedCoupon] = useState<{code: string; discount_amount: number} | null>(null);
+    const [couponLoading, setCouponLoading] = useState(false);
+    const [couponMessage, setCouponMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+    
+    const discount = appliedCoupon ? appliedCoupon.discount_amount : 0;
+    const total = subtotal - discount; // Shipping is 0
+    
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const { user, isAuthenticated, isLoading } = useAuth();
@@ -65,7 +74,8 @@ export default function Checkout() {
                     pincode: formData.pincode,
                     country: formData.country
                 },
-                items: items.map(item => ({ product_id: item.product_id, quantity: item.quantity }))
+                items: items.map(item => ({ product_id: item.product_id, quantity: item.quantity })),
+                coupon_code: appliedCoupon ? appliedCoupon.code : undefined
             };
 
             const res = await api.post('/orders', payload);
@@ -138,6 +148,29 @@ export default function Checkout() {
             </div>
         );
     }
+    
+    const handleApplyCoupon = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!couponCode) return;
+        setCouponLoading(true);
+        setCouponMessage(null);
+        try {
+            const res = await api.post('/coupons/validate', { code: couponCode, subtotal });
+            setAppliedCoupon(res.data.data);
+            setCouponMessage({ type: 'success', text: `Coupon applied successfully!` });
+        } catch (err: any) {
+            setAppliedCoupon(null);
+            setCouponMessage({ type: 'error', text: err.response?.data?.message || 'Invalid coupon' });
+        } finally {
+            setCouponLoading(false);
+        }
+    };
+    
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponCode('');
+        setCouponMessage(null);
+    };
 
     return (
         <div className="pt-24 pb-20 min-h-screen bg-[#F8F6F2]">
@@ -198,10 +231,45 @@ export default function Checkout() {
                                 </div>
                             ))}
                         </div>
+                        
+                        {/* Coupon Section */}
+                        <div className="border-t border-[#F8F6F2] pt-6 mb-6">
+                            <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                                <input 
+                                    type="text" 
+                                    placeholder="Gift card or discount code" 
+                                    value={couponCode}
+                                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                    disabled={!!appliedCoupon || couponLoading}
+                                    className="flex-1 px-4 py-2 border border-[#DCCFC0]/30 rounded-xl bg-[#F8F6F2] font-sans disabled:opacity-50" 
+                                />
+                                {appliedCoupon ? (
+                                    <button type="button" onClick={removeCoupon} className="px-4 py-2 bg-red-50 text-red-600 rounded-xl font-bold font-sans hover:bg-red-100 transition-colors border border-red-100">
+                                        Remove
+                                    </button>
+                                ) : (
+                                    <button type="submit" disabled={!couponCode || couponLoading} className="px-6 py-2 bg-[#1F2937] text-white rounded-xl font-bold font-sans hover:bg-[#C89B3C] transition-colors disabled:opacity-50">
+                                        {couponLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Apply'}
+                                    </button>
+                                )}
+                            </form>
+                            {couponMessage && (
+                                <p className={`text-sm mt-2 font-sans ${couponMessage.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                                    {couponMessage.text}
+                                </p>
+                            )}
+                        </div>
+
                         <div className="border-t border-[#F8F6F2] pt-6 space-y-3 font-sans">
-                            <div className="flex justify-between text-[#5A5A5A]"><span>Subtotal</span><span>₹{total}</span></div>
+                            <div className="flex justify-between text-[#5A5A5A]"><span>Subtotal</span><span>₹{subtotal.toLocaleString("en-IN")}</span></div>
+                            {appliedCoupon && (
+                                <div className="flex justify-between text-[#C89B3C] font-semibold">
+                                    <span>Discount ({appliedCoupon.code})</span>
+                                    <span>-₹{appliedCoupon.discount_amount.toLocaleString("en-IN")}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between text-[#5A5A5A]"><span>Shipping</span><span>Free</span></div>
-                            <div className="flex justify-between font-bold text-xl text-[#1F2937] pt-4 border-t border-[#F8F6F2]"><span>Total</span><span>₹{total}</span></div>
+                            <div className="flex justify-between font-bold text-xl text-[#1F2937] pt-4 border-t border-[#F8F6F2]"><span>Total</span><span>₹{total.toLocaleString("en-IN")}</span></div>
                         </div>
                         <button form="checkout-form" type="submit" disabled={loading} className="w-full mt-8 py-4 bg-[#1F2937] text-white font-bold rounded-xl hover:bg-[#C89B3C] transition-colors flex justify-center items-center gap-2">
                             {loading ? <><Loader2 className="w-5 h-5 animate-spin" /> Processing...</> : 'Pay Now securely with Razorpay'}
