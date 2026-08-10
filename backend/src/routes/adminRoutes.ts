@@ -5,6 +5,7 @@ import { dashboard, updateProfile, changePassword } from '../controllers/adminCo
 import { listCustomers, getCustomer, getCustomerAddresses } from '../controllers/customerController.js';
 import { listOrders, getOrder, updateOrderStatus } from '../controllers/orderController.js';
 import { listPayments, getPayment } from '../controllers/paymentController.js';
+import { getCoupons, getCoupon, createCoupon, updateCoupon, deleteCoupon } from '../controllers/couponController.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 
 const router = Router();
@@ -63,5 +64,12 @@ router.put('/orders/:id/status', updateOrderStatus);
 // Payments
 router.get('/payments', listPayments);
 router.get('/payments/:id', getPayment);
+
+// Coupons
+router.get('/coupons', getCoupons);
+router.get('/coupons/:id', getCoupon);
+router.post('/coupons', createCoupon);
+router.put('/coupons/:id', updateCoupon);
+router.delete('/coupons/:id', deleteCoupon);
 
 export default router;
