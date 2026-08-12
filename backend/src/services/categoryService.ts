@@ -9,6 +9,7 @@ export interface Category {
     status: 'active' | 'inactive';
     created_at: string;
     updated_at: string;
+    product_count?: number;
 }
 
 function generateSlug(name: string): string {
@@ -16,17 +17,30 @@ function generateSlug(name: string): string {
 }
 
 export async function getAllCategories(includeInactive = false): Promise<Category[]> {
-    let query = 'SELECT * FROM categories';
+    let query = `
+        SELECT c.*, COUNT(p.id) as product_count 
+        FROM categories c 
+        LEFT JOIN products p ON c.id = p.category_id 
+    `;
+    
     if (!includeInactive) {
-        query += ' WHERE status = "active"';
+        query += ` AND p.status = 'active' WHERE c.status = 'active'`;
     }
-    query += ' ORDER BY name ASC';
+    
+    query += ' GROUP BY c.id ORDER BY c.name ASC';
+    
     const [rows] = await pool.query<RowDataPacket[]>(query);
     return rows as Category[];
 }
 
 export async function getCategoryById(id: number): Promise<Category | null> {
-    const [rows] = await pool.query<RowDataPacket[]>('SELECT * FROM categories WHERE id = ?', [id]);
+    const [rows] = await pool.query<RowDataPacket[]>(`
+        SELECT c.*, COUNT(p.id) as product_count 
+        FROM categories c 
+        LEFT JOIN products p ON c.id = p.category_id 
+        WHERE c.id = ? 
+        GROUP BY c.id
+    `, [id]);
     if (rows.length === 0) return null;
     return rows[0] as Category;
 }
