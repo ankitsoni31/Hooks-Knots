@@ -16,6 +16,7 @@ export interface Product {
     created_at: string;
     updated_at: string;
     category_name?: string;
+    images?: any[];
 }
 
 function generateSlug(name: string): string {
@@ -86,6 +87,25 @@ export async function getProducts(options: {
     
     const total = countResult[0].total as number;
 
+    // Fetch images for these products
+    if (rows.length > 0) {
+        const productIds = rows.map((r: any) => r.id);
+        const [images] = await pool.query<RowDataPacket[]>(
+            'SELECT * FROM product_images WHERE product_id IN (?) ORDER BY display_order ASC, id ASC',
+            [productIds]
+        );
+        
+        const imagesByProductId = images.reduce((acc: any, img: any) => {
+            if (!acc[img.product_id]) acc[img.product_id] = [];
+            acc[img.product_id].push(img);
+            return acc;
+        }, {});
+
+        rows.forEach((row: any) => {
+            row.images = imagesByProductId[row.id] || [];
+        });
+    }
+
     return {
         items: rows as Product[],
         pagination: {
@@ -100,7 +120,13 @@ export async function getProducts(options: {
 export async function getProductById(id: number): Promise<Product | null> {
     const [rows] = await pool.query<RowDataPacket[]>('SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.id = ?', [id]);
     if (rows.length === 0) return null;
-    return rows[0] as Product;
+    
+    const product = rows[0] as Product;
+    
+    const [images] = await pool.query<RowDataPacket[]>('SELECT * FROM product_images WHERE product_id = ? ORDER BY display_order ASC, id ASC', [id]);
+    product.images = images as any[];
+
+    return product;
 }
 
 export async function createProduct(data: any): Promise<Product> {
