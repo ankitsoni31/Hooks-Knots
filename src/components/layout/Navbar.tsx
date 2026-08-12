@@ -13,10 +13,12 @@ import { navLinks } from "@/data/homepage";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { useWishlist } from "@/hooks/useWishlist";
+import SearchModal from "@/components/ui/SearchModal";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { items } = useCart();
   const { user, isAuthenticated } = useAuth();
   const { items: wishlistItems } = useWishlist();
@@ -87,7 +89,7 @@ export default function Navbar() {
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center gap-1">
-              <button className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300">
+              <button onClick={() => setIsSearchOpen(true)} className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300">
                 <Search className="w-[18px] h-[18px]" />
               </button>
               <Link to="/wishlist" className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300 relative block">
@@ -196,7 +198,7 @@ export default function Navbar() {
 
                 <div className="mt-6 pt-6 border-t border-[#DCCFC0]/30 space-y-3">
                   <div className="flex items-center gap-4 px-4">
-                    <button className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#F8F6F2] transition-all">
+                    <button onClick={() => { setIsMobileMenuOpen(false); setIsSearchOpen(true); }} className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#F8F6F2] transition-all">
                       <Search className="w-5 h-5" />
                     </button>
                     <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#F8F6F2] transition-all relative block">
@@ -225,6 +227,8 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 }
