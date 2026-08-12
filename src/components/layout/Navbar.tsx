@@ -90,14 +90,14 @@ export default function Navbar() {
               <button className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300">
                 <Search className="w-[18px] h-[18px]" />
               </button>
-              <button className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300 relative">
+              <Link to="/wishlist" className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300 relative block">
                 <Heart className="w-[18px] h-[18px]" />
                 {wishlistCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                     {wishlistCount}
                   </span>
                 )}
-              </button>
+              </Link>
               <Link to="/cart" className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#DCCFC0]/20 transition-all duration-300 relative block">
                 <ShoppingBag className="w-[18px] h-[18px]" />
                 {cartItemsCount > 0 && (
@@ -199,14 +199,14 @@ export default function Navbar() {
                     <button className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#F8F6F2] transition-all">
                       <Search className="w-5 h-5" />
                     </button>
-                    <button className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#F8F6F2] transition-all relative">
+                    <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="p-2.5 rounded-full text-[#1F2937]/70 hover:text-[#1F2937] hover:bg-[#F8F6F2] transition-all relative block">
                       <Heart className="w-5 h-5" />
                       {wishlistCount > 0 && (
                         <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                           {wishlistCount}
                         </span>
                       )}
-                    </button>
+                    </Link>
                   </div>
                   {isAuthenticated && user ? (
                     <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)} className="w-full px-5 py-3 text-sm font-medium bg-[#1F2937] text-white rounded-xl hover:bg-[#C89B3C] transition-all duration-300 font-sans block text-center">
